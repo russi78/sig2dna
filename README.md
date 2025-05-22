@@ -114,7 +114,7 @@ It supports **large-scale applications** such as identifying unknown substances 
 S = signal.from_peaks(...)
 ```
 
-
+🟥
 
 ### 3.2 **Wavelet Transform** 〰
 
@@ -133,6 +133,8 @@ $$
 where $s$ is the scale parameter (typically powers of two, e.g., $s = 2^n$) and $*$ the convolution operator.
 
 
+
+🟪
 
 ### 3.3 **Relationship of $W_s(t)$ with the second derivative** $x''(t)=\frac{\partial^2 x(t)}{\partial t^2}$
 
@@ -180,7 +182,7 @@ $(x'' * g)(t) = \int x(t - u) g''(u) \, du = (x * g'')(t)$
 
 </details>
 
-
+🟦
 
 ### 3.4 **Symbolic Encoding** 🔡
 
@@ -200,7 +202,7 @@ Each segment stores its `width`, `height`, and `position`.
 
 > The full-resolution symbolic sequence is reconstructed by interpolating or repeating these symbols proportionally to their span. A quantitative pseudo-inverse is proposed to reconstruct chemical signals from their code.
 
-
+🟩
 
 ### 3.5 **Symbolic Compression** 🗜️
 
@@ -217,7 +219,7 @@ Resulting in DNA-like sequences like:
 "YYAAZZBB_YAZB"
 ```
 
-
+🟨
 
 ### 3.6 **Structural Meaning** (e.g., <kbd>Y</kbd><kbd>A</kbd><kbd>Z</kbd><kbd>B</kbd> Motif)
 
@@ -230,7 +232,7 @@ A single Gaussian peak transformed via the Ricker wavelet results in:
 
 The `YAZB` motif is a **symbolic map of the Ricker wavelet transform (CWT) of a Gaussian**.  An alteration of the pattern  reveals overlapping Gaussians ,  asymmetric signals or more generally interactions and interferences.
 
-
+🟧
 
 ### 3.7 **Interpretation When Gaussians Overlap** 🌈⃤
 
@@ -254,7 +256,7 @@ So **changes in the symbolic code structure** directly reflect **signal interfer
 
 ## 🧠 4| **Entropy and Distance Metrics**
 
-`Sig2dna` implements several metrics to evaluate the similarity of coded chemical signals. Alignment is essential to compare them while respecting order. It is performed via global/local pairwise alignment using `difflib` or `Biopython`. Excess Entropy and Jensen-Shannon are best choices in the presence of complex mixtures by enabling the detection of small structural changes.  
+> `Sig2dna` implements several metrics to evaluate the similarity of coded chemical signals. Alignment is essential to compare them while respecting order. It is performed via global/local pairwise alignment using `difflib` or `Biopython`. Excess Entropy and Jensen-Shannon are best choices in the presence of complex mixtures by enabling the detection of small structural changes.  
 
 | Distance           | Sensitive to | Based on           | Alignment needed | Suitable for                          |
 | ------------------ | ------------ | ------------------ | ---------------- | ------------------------------------- |
@@ -280,7 +282,7 @@ Entropy $H$ is an extensive quantity verify additivity properties for independen
 - Morphologically similar but **intensity-scaled** signals
 - **Partially distorted** sequences (e.g., from mixtures or degradation)
 
-
+🔴
 
 ### 4.2 **Aligned sequences and Excess Entropy Distance**  ↔️
 
@@ -305,7 +307,7 @@ where:
 - $H(A)$ and $H(B)$ are the Shannon entropies of the original sequences
 - $H(\tilde{A} * \tilde{B})$ is the Shannon entropy of the aligned signal pairs (treated as "joint letters")
 
-
+🟠
 
 
 ### 4.3 **Jensen-Shannon Distance** ↔️
@@ -349,7 +351,7 @@ and $m_\ell$ is the frequency of symbol $\ell$ in the average distribution $M$.
 * **Useful for clustering** symbolic signals by type or composition, regardless of temporal structure.
 * **Complementary to entropy or edit-based distances**, which capture positional or morphological changes.
 
-
+🟡
 
 
 ### 4.4 **Jaccard Motif Distance** 🔍
@@ -419,7 +421,7 @@ $$
 x_b(t) = \max\left(0,\, x(t) - \text{baseline}(t)\right)
 $$
 
-
+🏻‎🏼‎🏽‎🏾🏿
 
 ### Step 2 — Poisson Noise Estimation ▶︎ ၊၊||၊|။|||| |
 
@@ -438,7 +440,7 @@ $$
 \lambda(t) = \frac{1}{\text{cv}(t)^2}
 $$
 
-
+🏻‎🏼‎🏽‎🏾🏿
 
 ### Step 3 — Bienaymé–Tchebychev Thresholding 🗑️
 
