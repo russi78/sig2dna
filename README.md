@@ -42,7 +42,7 @@ It supports **large-scale applications** such as identifying unknown substances 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [🧩 1| **Main Components**](#🧩-1|-main-components)
+- [🧩 1| **Main Components**](#-1-main-components)
 - [🧠 2| **Applications**](#-2-applications)
 - [🧬 3| **Core Concepts** - Overview](#-3-core-concepts---overview)
 - [🧠 4| **Entropy and Distance Metrics**](#-4-entropy-and-distance-metrics)
@@ -52,7 +52,7 @@ It supports **large-scale applications** such as identifying unknown substances 
 - [📏  8| Example Workflow](#--8-example-workflow)
 - [📊 9| Visualization](#-9-visualization)
 - [🔎 10| Motif Detection](#-10-motif-detection)
-- [☴ 11| Alignment](#%E2%98%B4-11-alignment)
+- [🤝 11| Alignment](#-11-alignment)
 - [🧪 12| Examples (unsorted)](#-12-examples-unsorted)
 - [📦 13| Installation](#-13-installation)
 - [💡14| Recommendations](#14-recommendations)
@@ -572,9 +572,9 @@ D.codesfull[4].extract_motifs("YAZB", minlen=4, plot=True)
 
 
 
-## ☴ 11| Alignment
+## 🤝 11| Alignment
 
-Fast symbolic alignment:⛓️⏱️
+☴ Fast symbolic alignment:⛓️⏱️
 
 ```python
 D1.codes[4].align(D2.codes[4], engine="bio")
