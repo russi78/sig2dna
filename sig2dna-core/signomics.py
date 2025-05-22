@@ -118,7 +118,7 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@gmail.com"
-__version__ = "0.33"
+__version__ = "0.34"
 
 # %% Dependencies
 # note:
@@ -390,13 +390,13 @@ class DNAsignal:
         if plot and "plot_signals" in plotter:
             self.plot_signals()
         if encode:
-            self.compute_cwt() # minimum encoder
+            self.compute_cwt(scales=scales) # minimum encoder
             if plot and "plot_transforms" in plotter:
                 self.plot_transforms()
             if ("encode_dna" in encoder) or ("encode_dna_full" in encoder):
-                self.encode_dna()
+                self.encode_dna(scales=scales)
                 if plot and "plot_codes" in plotter:
-                    self.plot_codes()
+                    self.plot_codes(scales=scales)
             if ("encode_dna_full" in encoder):
                 self.encode_dna_full()
 
@@ -2858,7 +2858,7 @@ class signal:
             return f"{s[:maxlen//2 - 2]}...{s[-maxlen//2 + 1:]}"
         meta = self.metadata
         span = (f"{self.x[0]:.2f}", f"{self.x[-1]:.2f}") if self.x is not None else ("?", "?")
-        size = len(self.x) if self.x is not None else 0
+        size = len(self.x) if self.x is not None else self.n
         field_width = 10
         lines = [
             f"<signal '{self.name}' [{self.type}]>",
@@ -2876,7 +2876,7 @@ class signal:
         if self.y is None:
             return f"<empty {self.type}-signal - source='{self.source}'>"
         else:
-            return f"<{self.type}-signal of length={self.n} source='{self.source}'>"
+            return f"<{self.name}:{self.type}-signal of length={self.n} source='{self.source}'>"
 
     def align_with(self, other, mode='union', n=1000):
         """
@@ -3205,7 +3205,7 @@ class signal_collection(list):
     mode : str
         Alignment strategy used ("union" or "intersection").
     n : int
-        Number of x-points used in alignment.
+        Number of x-points used in alignment (default=1024).
 
     Key Methods:
     ------------
@@ -3240,7 +3240,7 @@ class signal_collection(list):
     >>> sc.sum(coeffs=[0.4, 0.6]).plot()
     """
 
-    def __init__(self, *signals, n=1000, mode='union', force=True):
+    def __init__(self, *signals, n=1024, mode='union', name=None, force=True):
         """
         Initialize collection with aligned signals of the same type.
 
@@ -3255,9 +3255,11 @@ class signal_collection(list):
         force : bool (default=True)
             If False, require all signals to have the same type.
         """
+        nsignals = len(signals)
+        self.name = f"Collection of {nsignals} signals" if name is None else name
         self.mode = mode
         self.n = n
-        if not force and len(signals) > 1:
+        if not force and nsignals > 1:
             types = {s.type for s in signals}
             if len(types) > 1:
                 raise ValueError(f"Incompatible signal types: {types}. Use force=True to override.")
@@ -3400,7 +3402,7 @@ class signal_collection(list):
         s = self.sum(indices_or_names=indices_or_names, coeffs=coeffs)
         return signal(s.x.copy(), s.y / total_weight, name="mean", source="signal_collection")
 
-    def plot(self, indices=None, labels=True, title="Signal Collection", newfig=None, ax=None,
+    def plot(self, indices=None, labels=True, title=None, newfig=None, ax=None,
              show_mean=False, show_sum=False, coeffs=None, fontsize=12, colormap=None):
         """
         Plot selected signals with style attributes and optional overlays.
@@ -3467,6 +3469,8 @@ class signal_collection(list):
         if show_sum:
             self.sum(coeffs).plot(ax=ax, label="sum", color="red", linestyle="--", linewidth=2, fontsize=fontsize)
 
+        title = self.name if title is None else title
+        title = "Signal Collection" if title is None else title
         ax.set_title(title, fontsize=fontsize)
         ax.tick_params(labelsize=fontsize)
         if labels:
@@ -3757,7 +3761,7 @@ class signal_collection(list):
             encode : bool (default=True)
             scales : list (default=[1,3,4,8,16,32])
         """
-        return [DNAsignal(s,encode=encode) for s in self]
+        return [DNAsignal(s,scales=scales,encode=encode) for s in self]
 # %% peaks class
 # ------------------------
 class peaks:
@@ -4216,6 +4220,36 @@ if __name__ == "__main__":
     print(separator)
     for name, val in rows:
         print(f"{name:<20} | {val:6}")
+
+    # Demo Alignment on Banner
+    S1 = signal_collection.generate_synthetic(
+        n_signals=8,
+        n_peaks=2, kinds=("gauss",),
+        width_range=(0.5, 2), height_range=(1.0, 5.0),
+        x_range=(0, 127), n_points=128, normalize=False, seed=123)[0].mean()
+    S1.name = "S1"
+
+    S2 = signal_collection.generate_synthetic(
+        n_signals=6,
+        n_peaks=2, kinds=("gauss",),
+        width_range=(0.4, 1.5), height_range=(1.0, 5.0),
+        x_range=(0, 127), n_points=128, normalize=False, seed=456)[0].mean()
+    S2.name = "S2"
+    S12 = signal_collection(S1,S2,n=128)
+    S12.name = "S1 vs. S2"
+    S12.plot()
+    S12dna = S12._toDNA(scales=[1,2,4,8,16,32])
+    s1 = signal(y=S12dna[0].cwt_coeffs[2], name="S1")
+    s2 =  signal(y=S12dna[1].cwt_coeffs[2], name="S2")
+    s1code = S12dna[0].codesfull[2]
+    s2code = S12dna[1].codesfull[2]
+    s1code.align(s2code,"bio")
+    S12dna_scale2 = signal_collection(s1,s2)
+    S12dna_scale2.name="S1 vs. S2 - CWT at scale 2"
+    S12dna_scale2.plot()
+    s1code.plot_alignment()
+    s1code.plot_mask()
+    print(s1code.wrapped_alignment(width=1024))
 
 # %% obsolete
 """

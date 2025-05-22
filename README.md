@@ -4,13 +4,19 @@
 
  ﹏ ﮩ٨ـﮩﮩ٨ـﮩ٨ـﮩﮩ٨ـ﹏﹏
 
->`sig2dna` is a Python module that transforms complex 1D analytical signals into DNA-like symbolic sequences via morphological encoding. These symbolic fingerprints enable fast alignment, motif recognition, classification, and high-throughput comparison of signals originating from:
+>`sig2dna` is a Python module that transforms **complex 1D analytical signals** into **DNA-like symbolic sequences** via morphological encoding. These symbolic fingerprints enable fast alignment, motif recognition, classification, and high-throughput comparison of signals originating from:
 >
 >- `GC-MS` / `GC-FID` - 🔍low and🔬high resolution
 >- `HPLC-MS`  - 🔍low and🔬high resolution
 >- `NMR` / `FTIR` / `Raman` / `RX`
 
 It supports **large-scale applications** such as identifying unknown substances in ♻️ recycled materials or mixtures containing **NIAS** (*Non-Intentionally Added Substances*). 🗜️ Symbolic compression (up to 95%+) enables scalable storage and alignment—and seamless integration with **Large Language Models (LLMs)**.
+
+
+
+![si2dna Illustrations](docs/assets/sig2dna_banner.png)
+
+
 
 > 📚 This approach was developed and tested as part of the PhD thesis:
 >
@@ -57,13 +63,19 @@ It supports **large-scale applications** such as identifying unknown substances 
 
 
 
+
+
 ## 🧬 | Core Concepts - Overview
+
+
 
 > **Morphology Encoding as a “Genetic” Code**. Chemical signals are subjected to signal morphology encoding using continuous, symmetric wavelet transforms. The symbolic sequences are similar to genetic code. It is based on a limited number of letters,  symbols appear grouped into motifs which behave like  codons  As a result, a motif table can be used to recognize n-upplets in ^1^H-NMR, mass spectra, retention times, etc. 
 >
 > **Motif Recognition.** Searches of substances or typical patterns can be carried out via regular expressions or via transition probabilities (A→Z vs. Z→B vs. A→A) over a sliding window. All operations can be carried out in parallel for efficiency and automated treatment.
 >
 > **Scalable Machine-Learning**. High compression ratios enable the efficient storage of millions of chemical signatures. 
+
+
 
 ### Input Signal ➡️
 
@@ -73,6 +85,8 @@ It supports **large-scale applications** such as identifying unknown substances 
 ```python
 S = signal.from_peaks(...)
 ```
+
+
 
 ### Wavelet Transform 〰
 
@@ -90,6 +104,8 @@ $$
 
 where $s$ is the scale parameter (typically powers of two, e.g., $s = 2^n$) and $*$ the convolution operator.
 
+
+
 ### Relationship of $W_s(t)$ with the second derivative $x''(t)=\frac{\partial^2 x(t)}{\partial t^2}$
 
 Applying the **Ricker wavelet (second derivative of a Gaussian**) to the signal $x(t)$ via convolution (i.e., CWT) is equivalent to computing the **second derivative of $x(t)$** smoothed by the Gaussian kernel $g_s(t)$:
@@ -102,49 +118,37 @@ $$
     <summary>Click here for the demonstration</summary>
 
 
-The convolution of $x(t)$ with the second derivative of $g(t)$ is:
+The **convolution** of $x(t)$ with the second derivative of $g(t)$ is:
 
-$$
-(x * g'')(t) = \int_{-\infty}^{\infty} x(\tau) g''(t - \tau) \, d\tau
-$$
+$(x * g'')(t) = \int_{-\infty}^{\infty} x(\tau) g''(t - \tau) \, d\tau$
 
-We perform a change of variable: let $u = t - \tau$, so $\tau = t - u$ and $d\tau = -du$. This gives:
+We perform a **change of variable**: let $u = t - \tau$, so $\tau = t - u$ and $d\tau = -du$. This gives:
 
-$$
-(x * g'')(t) = \int_{-\infty}^{\infty} x(t - u) g''(u) \, du
-$$
+$(x * g'')(t) = \int_{-\infty}^{\infty} x(t - u) g''(u) \, du$
 
 Now consider the convolution of the **second derivative of $x(t)$** with $g(t)$:
 
-$$
-(x'' * g)(t) = \int_{-\infty}^{\infty} x''(\tau) g(t - \tau) \, d\tau
-$$
+$(x'' * g)(t) = \int_{-\infty}^{\infty} x''(\tau) g(t - \tau) \, d\tau$
 
-Again, perform the change of variable $u = t - \tau$, yielding:
+Again, perform the **change of variable** $u = t - \tau$, yielding:
 
-$$
-(x'' * g)(t) = \int_{-\infty}^{\infty} x''(t - u) g(u) \, du
-$$
+$(x'' * g)(t) = \int_{-\infty}^{\infty} x''(t - u) g(u) \, du$
 
-Now integrate by parts twice:
 
-* First integration by parts (assuming $g(u) \to 0$ and $x'(t - u) \to 0$ as $u \to \pm \infty$):
 
-$$
-\int x''(t - u) g(u) \, du = - \int x'(t - u) g'(u) \, du
-$$
+*Now integrate by parts twice*:
 
-* Second integration by parts:
+* **First integration by parts** (assuming $g(u) \to 0$ and $x'(t - u) \to 0$ as $u \to \pm \infty$):
 
-$$
-- \int x'(t - u) g'(u) \, du = \int x(t - u) g''(u) \, du
-$$
+$\int x''(t - u) g(u) \, du = - \int x'(t - u) g'(u) \, du$
+
+* **Second integration by part**s:
+
+$-\int x'(t - u) g'(u) \, du = \int x(t - u) g''(u) \, du$
 
 Which yields:
 
-$$
-(x'' * g)(t) = \int x(t - u) g''(u) \, du = (x * g'')(t)
-$$
+$(x'' * g)(t) = \int x(t - u) g''(u) \, du = (x * g'')(t)$
 
 </details>
 
@@ -168,6 +172,8 @@ Each segment stores its `width`, `height`, and `position`.
 
 > The full-resolution symbolic sequence is reconstructed by interpolating or repeating these symbols proportionally to their span. A quantitative pseudo-inverse is proposed to reconstruct chemical signals from their code.
 
+
+
 ###  Symbolic Compression 🗜️
 
 Symbolic sequences can be compressed and encoded at full resolution via:
@@ -183,6 +189,8 @@ Resulting in DNA-like sequences like:
 "YYAAZZBB_YAZB"
 ```
 
+
+
 ###Structural Meaning (e.g., <kbd>Y</kbd><kbd>A</kbd><kbd>Z</kbd><kbd>B</kbd> Motif)
 
 A single Gaussian peak transformed via the Ricker wavelet results in:
@@ -193,6 +201,8 @@ A single Gaussian peak transformed via the Ricker wavelet results in:
 - <kbd>B</kbd>: trailing decay
 
 The `YAZB` motif is a **symbolic map of the Ricker wavelet transform (CWT) of a Gaussian**.  An alteration of the pattern  reveals overlapping Gaussians ,  asymmetric signals or more generally interactions and interferences.
+
+
 
 ### **Interpretation When Gaussians Overlap** 🌈⃤
 
@@ -212,6 +222,8 @@ So **changes in the symbolic code structure** directly reflect **signal interfer
 
 
 
+
+
 ## 🧠 | Entropy and Distance Metrics
 
 `Sig2dna` implements several metrics to evaluate the similarity of coded chemical signals. Alignment is essential to compare them while respecting order. It is performed via global/local pairwise alignment using `difflib` or `Biopython`. Excess Entropy and Jensen-Shannon are best choices in the presence of complex mixtures by enabling the detection of small structural changes.  
@@ -223,11 +235,13 @@ So **changes in the symbolic code structure** directly reflect **signal interfer
 | **Levenshtein**    | Edit steps   | Insertion/Deletion | ✅ Yes            | Sequence-level variation              |
 | **Jaccard**        | Pattern sets | Motif occurrences  | ❌ No             | Motif overlap, Motif density map      |
 
+
+
 ### Shannon Entropy ⚀⚁⚂⚃⚄⚅
 
 Entropy provides a **robust, physics-informed metric** for morphological comparisons.  For a symbolic sequence $X$, it reads:
 $$
-H(X) = -\sum_i p(\ell_i) \log_2 p(\ell_i) \tag{8}
+H(X) = -\sum_i p(\ell_i) \log_2 p(\ell_i)
 $$
 
 where $p(\ell_i)$ is the frequency of letter $l_i$ in the sequence $X$.
@@ -237,6 +251,8 @@ Entropy $H$ is an extensive quantity verify additivity properties for independen
 - Signals with **shifts in baseline**
 - Morphologically similar but **intensity-scaled** signals
 - **Partially distorted** sequences (e.g., from mixtures or degradation)
+
+
 
 ### Aligned sequences and Excess Entropy Distance  ↔️
 
@@ -253,7 +269,7 @@ Let $A$ and $B$ be two symbolic sequences (`DNAstr`) representing two signals. A
 Given sequences $A$ and $B$, the mutually exclusive information or excess entropy is defined as:
 
 $$
-D_{\text{excess}}(A, B) = H(A) + H(B) - 2 H(\tilde{A} * \tilde{B}) \tag{9}
+D_{\text{excess}}(A, B) = H(A) + H(B) - 2 H(\tilde{A} * \tilde{B})
 $$
 
 where:
@@ -261,17 +277,21 @@ where:
 - $H(A)$ and $H(B)$ are the Shannon entropies of the original sequences
 - $H(\tilde{A} * \tilde{B})$ is the Shannon entropy of the aligned signal pairs (treated as "joint letters")
 
+
+
 ### Jensen-Shannon Distance ↔️
 
 Let $P$ and $Q$ be discrete probability distributions:
 
 $$
-M = \frac{1}{2}(P + Q), \quad D_{\text{JS}}(P, Q) = \sqrt{ \frac{1}{2} D_{\text{KL}}(P \| M) + \frac{1}{2} D_{\text{KL}}(Q \| M)} \tag{10}
+M = \frac{1}{2}(P + Q), \quad D_{\text{JS}}(P, Q) = \sqrt{ \frac{1}{2} D_{\text{KL}}(P \| M) + \frac{1}{2} D_{\text{KL}}(Q \| M) }
 $$
 
 Unlike Levenshtein or excess entropy, **JSD is position-agnostic** — it quantifies similarity in symbol usage patterns, not in the structure of the symbolic sequences.
 
 ------
+
+
 
 
 
@@ -285,21 +305,23 @@ Unlike Levenshtein or excess entropy, **JSD is position-agnostic** — it quanti
 >
 > However, on real-life signals, maximizing noise rejection by increasing $s$ can blur peak details. Preserving the **morphological fidelity** of peaks while ensuring their **detectability** requires operating **near the optimal scale**, not beyond it. To this end, `sig2dna` integrates a **robust preprocessing methodology** tailored for signals acquired through **accumulation or integration** (i.e., **counting statistics**), such as total ion counts in mass spectrometry or spectroscopic intensities.
 
+
+
 ### Step 1 — Median Baseline Subtraction ﹏𓊝﹏
 
-Let $x(t)$ be the input signal. We compute a moving median over a widow of width $w$:
+Let $x(t)$ be the input signal. We compute a moving median over a window of width $w$:
 
 $$
-\text{baseline}(t) = \text{median}\left\{x(t - w/2), \dots, x(t + w/2)\right\}
+\text{baseline}(t) = \text{median}\left[x(t - w/2), \dots, x(t + w/2)\right]
 $$
 
 Then, apply a non-negative correction:
 
 $$
-x_b(t) = \max\left(0,\, x(t) - \text{baseline}(t)\right) \tag{3}
+x_b(t) = \max\left(0,\, x(t) - \text{baseline}(t)\right)
 $$
 
----
+
 
 ### Step 2 — Poisson Noise Estimation ▶︎ ၊၊||၊|။|||| |
 
@@ -309,23 +331,23 @@ From the baseline-corrected signal $x_b(t)$:
 * Estimate the coefficient of variation:
 
 $$
-\text{cv}(t) = \frac{\sigma(t)}{\mu(t)} \tag{4}
+\text{cv}(t) = \frac{\sigma(t)}{\mu(t)}
 $$
 
 Assuming Poisson noise, infer the local Poisson parameter:
 
 $$
-\lambda(t) = \frac{1}{\text{cv}(t)^2} \tag{5}
+\lambda(t) = \frac{1}{\text{cv}(t)^2}
 $$
 
----
+
 
 ### Step 3 — Bienaymé–Tchebychev Thresholding 🗑️
 
 To reject noise, use a threshold $T(t)$ derived from $\lambda(t)$:
 
 $$
-T(t) = k \cdot \sqrt{10 \lambda(t) \Delta t} \tag{6}
+T(t) = k \cdot \sqrt{10 \lambda(t) \Delta t}
 $$
 
 Filtered signal is then:
@@ -335,10 +357,12 @@ x_{bf}(t) =
 \begin{cases}
 x_b(t) & \text{if } x_b(t) > T(t) \\
 0 & \text{otherwise}
-\end{cases} \tag{7}
+\end{cases}
 $$
 
 ---
+
+
 
 
 
@@ -347,7 +371,7 @@ $$
 Synthetic signals are modeled as a sum of Gaussian/Lorentzian/Triangle peaks. For Gaussian, they read
 
 $$
-s(t) = \sum_{i} h_i \cdot \exp\left(-\left(\frac{t - \mu_i}{0.6006 \cdot w_i}\right)^2\right) \tag{11}
+s(t) = \sum_{i} h_i \cdot \exp\left(-\left(\frac{t - \mu_i}{0.6006 \cdot w_i}\right)^2\right)
 $$
 
 where: 
@@ -367,6 +391,8 @@ This is used to:
 
 
 
+
+
 ## 📦 | Available Classes
 
 | Class Name            | Description                                                  |
@@ -380,6 +406,8 @@ This is used to:
 | `DNApairwiseAnalysis` | Tools for clustering, dendrograms, dimensionality reduction, advanced plotting |
 
 ---
+
+
 
 
 
@@ -403,7 +431,9 @@ analysis = DNAsignal._pairwiseEntropyDistance([D1, D2, D3], scale=4)
 
 ---
 
-------
+
+
+
 
 ## 📊 | Visualization
 
@@ -416,6 +446,10 @@ analysis = DNAsignal._pairwiseEntropyDistance([D1, D2, D3], scale=4)
 - `DNApairwiseAnalysis.plot_dendrogram()`, `scatter3d(), scatter(), heatmap`, `dimension_variance_curve`:  Cluster and distance views
 
 ------
+
+
+
+
 
 ## 🔎 | Motif Detection
 
@@ -434,6 +468,10 @@ D.codesfull[4].extract_motifs("YAZB", minlen=4, plot=True)
 
 ------
 
+
+
+
+
 ## ☴ | Alignment
 
 Fast symbolic alignment:⛓️⏱️
@@ -446,6 +484,10 @@ D1.plot_alignment()
 ```
 
 ------
+
+
+
+
 
 ## 🧪 | Examples (unsorted)
 
@@ -510,6 +552,9 @@ J.scatter3d(n_clusters=5)
 ---
 
 
+
+
+
 ## 📦 | Installation
 
 The `sig2dna` toolkit is composed of two core modules that must be used together:
@@ -518,6 +563,8 @@ The `sig2dna` toolkit is composed of two core modules that must be used together
 | -------------------------- | ------------------------------------------------------------ |
 | 🧬 `sig2dna_core.signomics` | Core module implementing symbolic transformation, wavelet coding, and signal comparison (compact code, >4 Klines) |
 | 🖨️ `sig2dna_core.figprint`  | Utility module for saving and exporting Matplotlib figures (PDF, PNG, SVG) |
+
+
 
 ### Recommended File Structure 🛠 
 
@@ -542,6 +589,8 @@ For simplicity and consistency, it is recommended to use both modules from a loc
 └── 📑 README.md
 ```
 
+
+
 ###  Import Example 📥
 
 In your scripts, import the components directly:
@@ -549,6 +598,8 @@ In your scripts, import the components directly:
 ```python
 from sig2dna_core.signomics import peaks, signal_collection, DNAsignal
 ```
+
+
 
 ### Dependencies 📦 
 
@@ -572,7 +623,11 @@ pip install PyWavelets seaborn scikit-learn python-Levenshtein biopython
 
 
 
+
+
 ## 💡| Recommendations
+
+
 
 ### Strategy for 2D or Multi-modal Chromatography 🧭
 
@@ -599,16 +654,22 @@ This enables **symbol-level matching**, which is more robust to noise, shifts, a
 
 ---
 
+
+
 ## 📄 License
 
 MIT License — 2025 Olivier Vitrac
+
+
 
 ## 📧 Contact
 
  Author: Olivier Vitrac
  Contact: [olivier.vitrac@gmail.com](mailto:olivier.vitrac@gmail.com)
- Version: 0.33 (2025-05-21)
+ Version: 0.34 (2025-05-22)
 
 ------
+
+
 
 > `Sig2dna` is part of the **Generative Simulation** project: building modular, interpretable **AI-ready** tools for scientific modeling.
