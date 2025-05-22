@@ -63,9 +63,7 @@ It supports **large-scale applications** such as identifying unknown substances 
 
 ------
 
-💡 To make it clickable on GitHub, paste the TOC anywhere in your `README.md`, ideally after the title or introduction.
 
-Would you like me to inject this directly into the `README.md` file at a specific location (e.g., after the title)?
 
 ## 🧩 1| **Main Components**
 
