@@ -58,29 +58,45 @@
 - Scales: $s = 2^0, 2^1,&hellip;, 2^n
 - Downsampling by scale (to reduce data volume and capture features at relevant resolutions)</p>
 <p>Symbolic Encoding and compressed representation</p>
-<p>The transformed signal Ts at scale s is converted to a sequence of symbolic letters using the rules:
-| Symbol | Description
-|
-| ------ | ------------------------------------------------- |
-| A
-| Monotonic increase crossing from − to +
-|
-| B
-| Monotonic increase from − to − (no zero crossing) |
-| C
-| Monotonic increase from + to +
-|
-| X
-| Monotonic decrease from + to + (no zero crossing) |
-| Y
-| Monotonic decrease from − to −
-|
-| Z
-| Monotonic decrease crossing from + to −
-|
-| _
-| Zero or noise (after filtering)
-|</p>
+<p>The transformed signal Ts at scale s is converted to a sequence of symbolic letters using the rules:</p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>Monotonic increase crossing from − to +</td>
+</tr>
+<tr>
+<td>B</td>
+<td>Monotonic increase from − to − (no zero crossing)</td>
+</tr>
+<tr>
+<td>C</td>
+<td>Monotonic increase from + to +</td>
+</tr>
+<tr>
+<td>X</td>
+<td>Monotonic decrease from + to + (no zero crossing)</td>
+</tr>
+<tr>
+<td>Y</td>
+<td>Monotonic decrease from − to −</td>
+</tr>
+<tr>
+<td>Z</td>
+<td>Monotonic decrease crossing from + to −</td>
+</tr>
+<tr>
+<td>_</td>
+<td>Zero or noise (after filtering)</td>
+</tr>
+</tbody>
+</table>
 <p>Each encoded segment is associated with:
 - width: number of points
 - height: amplitude difference</p>
@@ -90,36 +106,39 @@
 <p>conda install pywavelets seaborn scikit-learn
 conda install -c conda-forge python-Levenshtein biopython</p>
 <h2 id="examples">Examples</h2>
-<p>from signomics import DNAsignal
-from signal import signal</p>
-<h1 id="load-a-sampled-signal-eg-from-gc-ms-raman">Load a sampled signal (e.g., from GC-MS, Raman)</h1>
-<p>S = signal.from_peaks(&hellip;)
-# or any constructor for sampled signals</p>
-<h1 id="encode-into-dna-like-format">Encode into DNA-like format</h1>
-<p>D = DNAsignal(S, encode=True)
-D.encode_dna()
-D.plot_codes(scale=4)</p>
-<h1 id="compare-samples-and-cluster">Compare samples and cluster</h1>
-<p>Dlist = [DNAsignal(S1, encode=True), DNAsignal(S2, encode=True), &hellip;]
-analysis = DNAsignal._pairwiseEntropyDistance(Dlist, scale=4)
-analysis.plot_dendrogram()
-analysis.scatter(n_clusters=3)</p>
+<pre><code>&gt;&gt;&gt; from signomics import DNAsignal
+&gt;&gt;&gt; from signal import signal
+
+&gt;&gt;&gt; # Load a sampled signal (e.g., from GC-MS, Raman)
+&gt;&gt;&gt; S = signal.from_peaks(...)  # or any constructor for sampled signals
+
+&gt;&gt;&gt; # Encode into DNA-like format
+&gt;&gt;&gt; D = DNAsignal(S, encode=True)
+&gt;&gt;&gt; D.encode_dna()
+&gt;&gt;&gt; D.plot_codes(scale=4)
+
+&gt;&gt;&gt; # Compare samples and cluster
+&gt;&gt;&gt; Dlist = [DNAsignal(S1, encode=True), DNAsignal(S2, encode=True), ...]
+&gt;&gt;&gt; analysis = DNAsignal._pairwiseEntropyDistance(Dlist, scale=4)
+&gt;&gt;&gt; analysis.plot_dendrogram()
+&gt;&gt;&gt; analysis.scatter(n_clusters=3)
+</code></pre>
 <h2 id="notes">Notes</h2>
 <p>The methodology implemented in this module covers and extends the approaches initially tested during the PhD of Julien Kermorvant.
 "Concept of chemical fingerprints applied to the management of chemical risk of materials, recycled deposits and food packaging". PhD thesis AgroParisTech. December 2023. <a href="https://theses.hal.science/tel-04194172">https://theses.hal.science/tel-04194172</a></p>
 <h2 id="maintenance-forking">Maintenance &amp; forking</h2>
-<h1 id="git-init-b-main">git init -b main</h1>
-<h1 id="gh-repo-create-sig2dna-public-source-remoteorigin-push">gh repo create sig2dna &ndash;public &ndash;source=. &ndash;remote=origin &ndash;push</h1>
-<h1 id="alternatively">alternatively</h1>
-<h1 id="git-remote-add-origin-gitgithubcomovitracsig2dnagit">git remote add origin git@github.com:ovitrac/sig2dna.git</h1>
-<h1 id="git-branch-m-main-ensure-current-branch-is-named-main">git branch -M main
-# Ensure current branch is named 'main'</h1>
-<h1 id="git-push-u-origin-main-push-and-set-upstream-tracking">git push -u origin main
-# Push and set upstream tracking</h1>
-<p>tree -P '<em>.py' -P '</em>.md' -P 'LICENSE' -I '<strong>pycache</strong>|.*' &ndash;prune
-pdoc ./sig2dna-core/signomics.py -f &ndash;html -o ./docs</p>
+<pre><code>    $ git init -b main
+    $ gh repo create sig2dna --public --source=. --remote=origin --push
+    $ # alternatively
+    $ # git remote add origin git@github.com:ovitrac/sig2dna.git
+    $ # git branch -M main        # Ensure current branch is named 'main'
+    $ # git push -u origin main   # Push and set upstream tracking
+
+    $ tree -P '*.py' -P '*.md' -P 'LICENSE' -I '__pycache__|.*' --prune
+    $ pdoc ./sig2dna-core/signomics.py -f --html -o ./docs
+</code></pre>
 <p>Author: Olivier Vitrac — olivier.vitrac@gmail.com
-Revision: 2025-05-21</p>
+Revision: 2025-05-22</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -172,6 +191,7 @@ Wavelet Transform
 Symbolic Encoding and compressed representation
 
 The transformed signal Ts at scale s is converted to a sequence of symbolic letters using the rules:
+
 | Symbol | Description                                       |
 | ------ | ------------------------------------------------- |
 | A      | Monotonic increase crossing from − to +           |
@@ -197,22 +217,22 @@ conda install -c conda-forge python-Levenshtein biopython
 
 Examples
 --------
-from signomics import DNAsignal
-from signal import signal
+    &gt;&gt;&gt; from signomics import DNAsignal
+    &gt;&gt;&gt; from signal import signal
 
-# Load a sampled signal (e.g., from GC-MS, Raman)
-S = signal.from_peaks(...)  # or any constructor for sampled signals
+    &gt;&gt;&gt; # Load a sampled signal (e.g., from GC-MS, Raman)
+    &gt;&gt;&gt; S = signal.from_peaks(...)  # or any constructor for sampled signals
 
-# Encode into DNA-like format
-D = DNAsignal(S, encode=True)
-D.encode_dna()
-D.plot_codes(scale=4)
+    &gt;&gt;&gt; # Encode into DNA-like format
+    &gt;&gt;&gt; D = DNAsignal(S, encode=True)
+    &gt;&gt;&gt; D.encode_dna()
+    &gt;&gt;&gt; D.plot_codes(scale=4)
 
-# Compare samples and cluster
-Dlist = [DNAsignal(S1, encode=True), DNAsignal(S2, encode=True), ...]
-analysis = DNAsignal._pairwiseEntropyDistance(Dlist, scale=4)
-analysis.plot_dendrogram()
-analysis.scatter(n_clusters=3)
+    &gt;&gt;&gt; # Compare samples and cluster
+    &gt;&gt;&gt; Dlist = [DNAsignal(S1, encode=True), DNAsignal(S2, encode=True), ...]
+    &gt;&gt;&gt; analysis = DNAsignal._pairwiseEntropyDistance(Dlist, scale=4)
+    &gt;&gt;&gt; analysis.plot_dendrogram()
+    &gt;&gt;&gt; analysis.scatter(n_clusters=3)
 
 Notes
 -----
@@ -222,18 +242,20 @@ The methodology implemented in this module covers and extends the approaches ini
 
 Maintenance &amp; forking
 ---------------------
-# git init -b main
-# gh repo create sig2dna --public --source=. --remote=origin --push
-# alternatively
-#   git remote add origin git@github.com:ovitrac/sig2dna.git
-#   git branch -M main        # Ensure current branch is named &#39;main&#39;
-#   git push -u origin main   # Push and set upstream tracking
-tree -P &#39;*.py&#39; -P &#39;*.md&#39; -P &#39;LICENSE&#39; -I &#39;__pycache__|.*&#39; --prune
-pdoc ./sig2dna-core/signomics.py -f --html -o ./docs
+
+        $ git init -b main
+        $ gh repo create sig2dna --public --source=. --remote=origin --push
+        $ # alternatively
+        $ # git remote add origin git@github.com:ovitrac/sig2dna.git
+        $ # git branch -M main        # Ensure current branch is named &#39;main&#39;
+        $ # git push -u origin main   # Push and set upstream tracking
+
+        $ tree -P &#39;*.py&#39; -P &#39;*.md&#39; -P &#39;LICENSE&#39; -I &#39;__pycache__|.*&#39; --prune
+        $ pdoc ./sig2dna-core/signomics.py -f --html -o ./docs
 
 
 Author: Olivier Vitrac — olivier.vitrac@gmail.com
-Revision: 2025-05-21
+Revision: 2025-05-22
 &#34;&#34;&#34;
 
 # %% Indentication
@@ -12713,21 +12735,10 @@ If None, open new figure only the first time this collection is plotted.</dd>
 <li><a href="#core-concept">Core Concept</a></li>
 <li><a href="#installation">Installation</a></li>
 <li><a href="#examples">Examples</a></li>
-</ul>
-</li>
-<li><a href="#load-a-sampled-signal-eg-from-gc-ms-raman">Load a sampled signal (e.g., from GC-MS, Raman)</a></li>
-<li><a href="#encode-into-dna-like-format">Encode into DNA-like format</a></li>
-<li><a href="#compare-samples-and-cluster">Compare samples and cluster</a><ul>
 <li><a href="#notes">Notes</a></li>
 <li><a href="#maintenance-forking">Maintenance &amp; forking</a></li>
 </ul>
 </li>
-<li><a href="#git-init-b-main">git init -b main</a></li>
-<li><a href="#gh-repo-create-sig2dna-public-source-remoteorigin-push">gh repo create sig2dna &ndash;public &ndash;source=. &ndash;remote=origin &ndash;push</a></li>
-<li><a href="#alternatively">alternatively</a></li>
-<li><a href="#git-remote-add-origin-gitgithubcomovitracsig2dnagit">git remote add origin git@github.com:ovitrac/sig2dna.git</a></li>
-<li><a href="#git-branch-m-main-ensure-current-branch-is-named-main">git branch -M main # Ensure current branch is named 'main'</a></li>
-<li><a href="#git-push-u-origin-main-push-and-set-upstream-tracking">git push -u origin main # Push and set upstream tracking</a></li>
 </ul>
 </div>
 <ul id="index">

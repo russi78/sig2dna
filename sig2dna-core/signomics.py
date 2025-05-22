@@ -46,6 +46,7 @@ Wavelet Transform
 Symbolic Encoding and compressed representation
 
 The transformed signal Ts at scale s is converted to a sequence of symbolic letters using the rules:
+
 | Symbol | Description                                       |
 | ------ | ------------------------------------------------- |
 | A      | Monotonic increase crossing from − to +           |
@@ -71,22 +72,22 @@ conda install -c conda-forge python-Levenshtein biopython
 
 Examples
 --------
-from signomics import DNAsignal
-from signal import signal
+    >>> from signomics import DNAsignal
+    >>> from signal import signal
 
-# Load a sampled signal (e.g., from GC-MS, Raman)
-S = signal.from_peaks(...)  # or any constructor for sampled signals
+    >>> # Load a sampled signal (e.g., from GC-MS, Raman)
+    >>> S = signal.from_peaks(...)  # or any constructor for sampled signals
 
-# Encode into DNA-like format
-D = DNAsignal(S, encode=True)
-D.encode_dna()
-D.plot_codes(scale=4)
+    >>> # Encode into DNA-like format
+    >>> D = DNAsignal(S, encode=True)
+    >>> D.encode_dna()
+    >>> D.plot_codes(scale=4)
 
-# Compare samples and cluster
-Dlist = [DNAsignal(S1, encode=True), DNAsignal(S2, encode=True), ...]
-analysis = DNAsignal._pairwiseEntropyDistance(Dlist, scale=4)
-analysis.plot_dendrogram()
-analysis.scatter(n_clusters=3)
+    >>> # Compare samples and cluster
+    >>> Dlist = [DNAsignal(S1, encode=True), DNAsignal(S2, encode=True), ...]
+    >>> analysis = DNAsignal._pairwiseEntropyDistance(Dlist, scale=4)
+    >>> analysis.plot_dendrogram()
+    >>> analysis.scatter(n_clusters=3)
 
 Notes
 -----
@@ -96,18 +97,20 @@ The methodology implemented in this module covers and extends the approaches ini
 
 Maintenance & forking
 ---------------------
-# git init -b main
-# gh repo create sig2dna --public --source=. --remote=origin --push
-# alternatively
-#   git remote add origin git@github.com:ovitrac/sig2dna.git
-#   git branch -M main        # Ensure current branch is named 'main'
-#   git push -u origin main   # Push and set upstream tracking
-tree -P '*.py' -P '*.md' -P 'LICENSE' -I '__pycache__|.*' --prune
-pdoc ./sig2dna-core/signomics.py -f --html -o ./docs
+
+        $ git init -b main
+        $ gh repo create sig2dna --public --source=. --remote=origin --push
+        $ # alternatively
+        $ # git remote add origin git@github.com:ovitrac/sig2dna.git
+        $ # git branch -M main        # Ensure current branch is named 'main'
+        $ # git push -u origin main   # Push and set upstream tracking
+
+        $ tree -P '*.py' -P '*.md' -P 'LICENSE' -I '__pycache__|.*' --prune
+        $ pdoc ./sig2dna-core/signomics.py -f --html -o ./docs
 
 
 Author: Olivier Vitrac — olivier.vitrac@gmail.com
-Revision: 2025-05-21
+Revision: 2025-05-22
 """
 
 # %% Indentication
