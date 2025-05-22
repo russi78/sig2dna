@@ -37,7 +37,37 @@ It supports **large-scale applications** such as identifying unknown substances 
 
 
 
-## 🧩 | Main Components
+## 📚 Table of Contents
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [🧩 1| **Main Components**](#🧩-1|-main-components)
+- [🧠 2| **Applications**](#-2-applications)
+- [🧬 3| **Core Concepts** - Overview](#-3-core-concepts---overview)
+- [🧠 4| **Entropy and Distance Metrics**](#-4-entropy-and-distance-metrics)
+- [🔍 5| Baseline Filtering and Poisson Noise Rejection](#-5-baseline-filtering-and-poisson-noise-rejection)
+- [🧪 6| Synthetic Signal Generation](#-6-synthetic-signal-generation)
+- [📦 7| Available Classes](#-7-available-classes)
+- [📏  8| Example Workflow](#--8-example-workflow)
+- [📊 9| Visualization](#-9-visualization)
+- [🔎 10| Motif Detection](#-10-motif-detection)
+- [☴ 11| Alignment](#%E2%98%B4-11-alignment)
+- [🧪 12| Examples (unsorted)](#-12-examples-unsorted)
+- [📦 13| Installation](#-13-installation)
+- [💡14| Recommendations](#14-recommendations)
+- [📄 | License](#--license)
+- [📧 | Contact](#--contact)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+------
+
+💡 To make it clickable on GitHub, paste the TOC anywhere in your `README.md`, ideally after the title or introduction.
+
+Would you like me to inject this directly into the `README.md` file at a specific location (e.g., after the title)?
+
+## 🧩 1| **Main Components**
 
 | Class                 | Description                                                  |
 | --------------------- | ------------------------------------------------------------ |
@@ -49,7 +79,7 @@ It supports **large-scale applications** such as identifying unknown substances 
 
 
 
-## 🧠 | Applications
+## 🧠 2| **Applications**
 
 - High-throughput chemical pattern recognition 🆔, -ˋˏ✄┈┈┈┈
 - NIAS tracking in complex matrices ⌬,🔔⚠️
@@ -65,7 +95,7 @@ It supports **large-scale applications** such as identifying unknown substances 
 
 
 
-## 🧬 | Core Concepts - Overview
+## 🧬 3| **Core Concepts** - Overview
 
 
 
@@ -77,7 +107,7 @@ It supports **large-scale applications** such as identifying unknown substances 
 
 
 
-### Input Signal ➡️
+### 3.1 **Input Signa**l ➡️
 
 - One-dimensional `signal` objects (NumPy-based)
 - Supports synthetic and experimental sources
@@ -88,7 +118,7 @@ S = signal.from_peaks(...)
 
 
 
-### Wavelet Transform 〰
+### 3.2 **Wavelet Transform** 〰
 
 A **Mexican hat (Ricker)** wavelet is used:
 
@@ -106,7 +136,7 @@ where $s$ is the scale parameter (typically powers of two, e.g., $s = 2^n$) and 
 
 
 
-### Relationship of $W_s(t)$ with the second derivative $x''(t)=\frac{\partial^2 x(t)}{\partial t^2}$
+### 3.3 **Relationship of $W_s(t)$ with the second derivative** $x''(t)=\frac{\partial^2 x(t)}{\partial t^2}$
 
 Applying the **Ricker wavelet (second derivative of a Gaussian**) to the signal $x(t)$ via convolution (i.e., CWT) is equivalent to computing the **second derivative of $x(t)$** smoothed by the Gaussian kernel $g_s(t)$:
 
@@ -154,7 +184,7 @@ $(x'' * g)(t) = \int x(t - u) g''(u) \, du = (x * g'')(t)$
 
 
 
-### Symbolic Encoding 🔡
+### 3.4 **Symbolic Encoding** 🔡
 
 Each segment of the wavelet-transformed signal is encoded into one of the symbolic codes corresponding to the table of variation $\text{sign}\left(\frac{\partial}{\partial t}W_s(t)\right)$ and $\text{sign}\left(W_s(t)\right)$.
 
@@ -174,7 +204,7 @@ Each segment stores its `width`, `height`, and `position`.
 
 
 
-###  Symbolic Compression 🗜️
+### 3.5 **Symbolic Compression** 🗜️
 
 Symbolic sequences can be compressed and encoded at full resolution via:
 
@@ -191,7 +221,7 @@ Resulting in DNA-like sequences like:
 
 
 
-###Structural Meaning (e.g., <kbd>Y</kbd><kbd>A</kbd><kbd>Z</kbd><kbd>B</kbd> Motif)
+### 3.6 **Structural Meaning** (e.g., <kbd>Y</kbd><kbd>A</kbd><kbd>Z</kbd><kbd>B</kbd> Motif)
 
 A single Gaussian peak transformed via the Ricker wavelet results in:
 
@@ -204,7 +234,7 @@ The `YAZB` motif is a **symbolic map of the Ricker wavelet transform (CWT) of a 
 
 
 
-### **Interpretation When Gaussians Overlap** 🌈⃤
+### 3.7 **Interpretation When Gaussians Overlap** 🌈⃤
 
 When two Gaussians overlap, especially at close proximity or with different amplitudes:
 
@@ -224,7 +254,7 @@ So **changes in the symbolic code structure** directly reflect **signal interfer
 
 
 
-## 🧠 | Entropy and Distance Metrics
+## 🧠 4| **Entropy and Distance Metrics**
 
 `Sig2dna` implements several metrics to evaluate the similarity of coded chemical signals. Alignment is essential to compare them while respecting order. It is performed via global/local pairwise alignment using `difflib` or `Biopython`. Excess Entropy and Jensen-Shannon are best choices in the presence of complex mixtures by enabling the detection of small structural changes.  
 
@@ -237,7 +267,7 @@ So **changes in the symbolic code structure** directly reflect **signal interfer
 
 
 
-### Shannon Entropy ⚀⚁⚂⚃⚄⚅
+### 4.1 **Shannon Entropy** ⚀⚁⚂⚃⚄⚅
 
 Entropy provides a **robust, physics-informed metric** for morphological comparisons.  For a symbolic sequence $X$, it reads:
 $$
@@ -254,7 +284,7 @@ Entropy $H$ is an extensive quantity verify additivity properties for independen
 
 
 
-### Aligned sequences and Excess Entropy Distance  ↔️
+### 4.2 **Aligned sequences and Excess Entropy Distance**  ↔️
 
 Let $A$ and $B$ be two symbolic sequences (`DNAstr`) representing two signals. After alignment (*e.g.,* via global/local pairwise alignment using `difflib` or `Biopython`), we obtain:
 
@@ -279,23 +309,93 @@ where:
 
 
 
-### Jensen-Shannon Distance ↔️
 
-Let $P$ and $Q$ be discrete probability distributions:
+### 4.3 **Jensen-Shannon Distance** ↔️
+
+Let $P$ and $Q$ be the **empirical frequency distributions** of symbolic letters in two DNA-like coded signals $A$ and $B$, respectively. That is:
+
+* $P = {p_\ell}$ where $p_\ell = \frac{\text{count of symbol } \ell \text{ in } A}{|A|}$
+* $Q = {q_\ell}$ where $q_\ell = \frac{\text{count of symbol } \ell \text{ in } B}{|B|}$
+
+Let $M$ be the average distribution:
 
 $$
-M = \frac{1}{2}(P + Q), \quad D_{\text{JS}}(P, Q) = \sqrt{ \frac{1}{2} D_{\text{KL}}(P \| M) + \frac{1}{2} D_{\text{KL}}(Q \| M) }
+M = \frac{1}{2}(P + Q)
 $$
 
-Unlike Levenshtein or excess entropy, **JSD is position-agnostic** — it quantifies similarity in symbol usage patterns, not in the structure of the symbolic sequences.
+Then, the **Jensen–Shannon distance** between $P$ and $Q$ is defined as:
 
-------
+$$
+D_{\text{JS}}(P, Q) = \sqrt{ \frac{1}{2} D_{\text{KL}}(P \| M) + \frac{1}{2} D_{\text{KL}}(Q \| M) }
+$$
+
+where $D_{\text{KL}}$ is the Kullback-Leibler divergence:
+
+$$
+D_{\text{KL}}(P \| M) = \sum_\ell p_\ell \log_2 \left( \frac{p_\ell}{m_\ell} \right)
+$$
+
+and $m_\ell$ is the frequency of symbol $\ell$ in the average distribution $M$.
+
+
+#### 4.3.1 Interpretation 💡
+
+* The **Jensen–Shannon distance** quantifies **how different the symbol usage is** between two signals, **ignoring the order** in which the symbols appear.
+* It is **bounded between 0 and 1**, symmetric, and always finite (even when some symbols are missing in one sequence).
+* A value of **0** indicates identical symbol distributions, while **1** indicates completely disjoint symbol usage.
+
+
+#### 4.3.2 Use Cases 🧪
+
+* **Robust against misalignment or noise**: two signals with similar overall composition but different positions will still score low JSD.
+* **Useful for clustering** symbolic signals by type or composition, regardless of temporal structure.
+* **Complementary to entropy or edit-based distances**, which capture positional or morphological changes.
+
+
+
+
+### 4.4 **Jaccard Motif Distance** 🔍
+
+The **Jaccard distance** measures the similarity between two symbolic signals by comparing the sets of **motifs** (short symbolic substrings) they contain, without requiring alignment. It is particularly suited for identifying common structural patterns across signals, regardless of their order or spacing.
+
+Given two sequences $A$ and $B$, and a set of motifs $\mathcal{M}$ of length $k$ (typically 3–5 characters), we define:
+
+* $\mathcal{M}(A)$: set of motifs found in $A$
+* $\mathcal{M}(B)$: set of motifs found in $B$
+
+Then the **Jaccard distance** is defined as:
+
+$$
+D_{\text{Jaccard}}(A, B) = 1 - \frac{|\mathcal{M}(A) \cap \mathcal{M}(B)|}{|\mathcal{M}(A) \cup \mathcal{M}(B)|}
+$$
+
+#### 4.4.1 Key Features:
+
+* ✅ **No alignment needed** — motif presence is evaluated globally
+* 🔍 **Sensitive to local patterns** — detects repeated or shared symbolic structures
+* 📈 **Sparse and interpretable** — suitable for heatmaps and clustering
+
+#### 4.4.2 Implementation Notes:
+
+* Motifs are extracted using a sliding window of fixed length (default: `k=4`)
+* Symbol sequences are assumed to be from the encoded `DNAstr` outputs
+* Motif sets are hashed to speed up large comparisons
+* Jaccard scores are computed pairwise across a collection of symbolic sequences
+
+This metric is especially useful when:
+
+* You expect **common substructures** across signals
+* Signals may differ in length or alignment is unreliable
+* You want to create **density maps of motif usage** or explore **structural similarity clusters**
+
+
+---
 
 
 
 
 
-## 🔍 | Baseline Filtering and Poisson Noise Rejection
+## 🔍 5| Baseline Filtering and Poisson Noise Rejection
 
 > The **Ricker wavelet** $\psi_s(t)$ used in `sig2dna` is mathematically the **second derivative of a Gaussian kernel**. As such, applying the Continuous Wavelet Transform (CWT) with $\psi_s(t)$ is equivalent to performing a **second-order differentiation** of the signal $x(t)$ followed by a **Gaussian smoothing**, where the scale parameter $s$ controls the bandwidth.
 >
@@ -366,7 +466,7 @@ $$
 
 
 
-## 🧪 | Synthetic Signal Generation
+## 🧪 6| Synthetic Signal Generation
 
 Synthetic signals are modeled as a sum of Gaussian/Lorentzian/Triangle peaks. For Gaussian, they read
 
@@ -393,7 +493,7 @@ This is used to:
 
 
 
-## 📦 | Available Classes
+## 📦 7| Available Classes
 
 | Class Name            | Description                                                  |
 | --------------------- | ------------------------------------------------------------ |
@@ -411,7 +511,7 @@ This is used to:
 
 
 
-## 📏  | Example Workflow
+## 📏  8| Example Workflow
 
 ```python
 from signomics import DNAsignal
@@ -435,7 +535,7 @@ analysis = DNAsignal._pairwiseEntropyDistance([D1, D2, D3], scale=4)
 
 
 
-## 📊 | Visualization
+## 📊 9| Visualization
 
 - `signal.plot()`, `signal_collection.plot()` : plot signals
 - `DNAsignal.plot_signals()`: Original + CWT overlay
@@ -451,7 +551,7 @@ analysis = DNAsignal._pairwiseEntropyDistance([D1, D2, D3], scale=4)
 
 
 
-## 🔎 | Motif Detection
+## 🔎 10| Motif Detection
 
 Pattern search: ꒷꒦꒷꒦꒷꒦꒷꒦꒷꒦꒷
 
@@ -472,7 +572,7 @@ D.codesfull[4].extract_motifs("YAZB", minlen=4, plot=True)
 
 
 
-## ☴ | Alignment
+## ☴ 11| Alignment
 
 Fast symbolic alignment:⛓️⏱️
 
@@ -489,7 +589,7 @@ D1.plot_alignment()
 
 
 
-## 🧪 | Examples (unsorted)
+## 🧪 12| Examples (unsorted)
 
 ```python
 from sig2dna_core.signomics import peaks, signal_collection, DNAsignal
@@ -555,7 +655,7 @@ J.scatter3d(n_clusters=5)
 
 
 
-## 📦 | Installation
+## 📦 13| Installation
 
 The `sig2dna` toolkit is composed of two core modules that must be used together:
 
@@ -625,7 +725,7 @@ pip install PyWavelets seaborn scikit-learn python-Levenshtein biopython
 
 
 
-## 💡| Recommendations
+## 💡14| Recommendations
 
 
 
@@ -656,13 +756,13 @@ This enables **symbol-level matching**, which is more robust to noise, shifts, a
 
 
 
-## 📄 License
+## 📄 | License
 
 MIT License — 2025 Olivier Vitrac
 
 
 
-## 📧 Contact
+## 📧 | Contact
 
  Author: Olivier Vitrac
  Contact: [olivier.vitrac@gmail.com](mailto:olivier.vitrac@gmail.com)
